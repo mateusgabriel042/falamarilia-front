@@ -42,7 +42,7 @@ const Sidebar = (props) => {
     return routes.map((prop, key) => {
       return (
         <NavItem key={key}>
-          {!prop.path.includes(':id') ? (
+          {!(prop.path.includes('login') || prop.path.includes(':id')) ? (
             <NavLink
               to={prop.layout + prop.path}
               tag={NavLinkRRD}

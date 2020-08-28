@@ -12,13 +12,13 @@ import authenticated from '../utils/authenticated'
 class Admin extends React.Component {
   componentDidMount(e) {
     authenticated().then((res) => {
-      if (res === false) this.props.history.push('/auth')
+      if (res === false || res === undefined) this.props.history.push('/auth')
     })
   }
 
   componentDidUpdate(e) {
     authenticated().then((res) => {
-      if (res === false) this.props.history.push('/auth')
+      if (res === false || res === undefined) this.props.history.push('/auth')
     })
     document.documentElement.scrollTop = 0
     document.scrollingElement.scrollTop = 0
