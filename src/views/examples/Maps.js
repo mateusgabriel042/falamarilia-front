@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useContext, createContext } from 'react'
 import { Link } from 'react-router-dom'
 import {
   withScriptjs,
@@ -22,44 +22,11 @@ import Header from 'components/Headers/Header.js'
 
 import api from '../../services/api'
 
-let totalSolicitations = 0
+let total = 0
 
 const MapWrapper = withScriptjs(
   withGoogleMap((props) => {
     const [isOpen, setIsOpen] = useState({ marker: 0, isOpen: true })
-    const [solicitations, setSolicitations] = useState([])
-    const [solicitationsMarker, setSolicitationsMaker] = useState([])
-    const [userData, setUserData] = useState('')
-
-    useEffect(() => {
-      const loadToken = () => {
-        setUserData(localStorage.getItem('@user_data'))
-      }
-
-      const getSolicitations = async (page = 1) => {
-        try {
-          const userToken = JSON.parse(userData)
-          await api
-            .get(`/solicitation?page=${page}&waiting=true`, {
-              headers: {
-                Authorization: 'Bearer ' + userToken.token,
-              },
-            })
-            .then((res) => {
-              try {
-                if (res.data) {
-                  setSolicitations(res.data.records)
-                }
-              } catch (err) {}
-            })
-            .catch((err) => {})
-        } catch (_err) {}
-      }
-
-      loadToken()
-      getSolicitations(1)
-      totalSolicitations = solicitations.length
-    }, [solicitations, userData])
 
     const handleOpenInfoWindow = (idx) => {
       setIsOpen({
@@ -118,9 +85,8 @@ const MapWrapper = withScriptjs(
           ],
         }}
       >
-        {/* <Marker position={{ lat: -22.2187469, lng: -49.9569446 }} /> */}
-        {solicitations ? (
-          solicitations.map((element, idx) => {
+        {props.solicitations ? (
+          props.solicitations.map((element, idx) => {
             // console.log(element)
             const geoloc = JSON.parse(element.geoloc)
             return (
@@ -187,6 +153,40 @@ const MapWrapper = withScriptjs(
 )
 
 const Maps = (props) => {
+  const [solicitations, setSolicitations] = useState([])
+  const [total, setTotal] = useState(0)
+  const [userData, setUserData] = useState('')
+
+  useEffect(() => {
+    const loadToken = () => {
+      setUserData(localStorage.getItem('@user_data'))
+    }
+
+    const getSolicitations = async (page = 1) => {
+      try {
+        const userToken = JSON.parse(userData)
+        await api
+          .get(`/solicitation?page=${page}&waiting=true`, {
+            headers: {
+              Authorization: 'Bearer ' + userToken.token,
+            },
+          })
+          .then((res) => {
+            try {
+              if (res.data) {
+                setSolicitations(res.data.records)
+                setTotal(res.data.records.length)
+              }
+            } catch (err) {}
+          })
+          .catch((err) => {})
+      } catch (_err) {}
+    }
+
+    loadToken()
+    getSolicitations(1)
+  }, [solicitations, userData])
+
   return (
     <>
       <Header />
@@ -197,7 +197,7 @@ const Maps = (props) => {
             <Card className="shadow border-0">
               <CardHeader className="border-0">
                 <h3 id="title" className="mb-0">
-                  {`Mapa das Solicitações - Total: ${totalSolicitations}`}
+                  {`Mapa das Solicitações - Total: ${total}`}
                 </h3>
               </CardHeader>
               <CardFooter>
@@ -214,6 +214,7 @@ const Maps = (props) => {
                   mapElement={
                     <div style={{ height: `100%`, borderRadius: 'inherit' }} />
                   }
+                  solicitations={solicitations}
                 />
               </CardFooter>
             </Card>
