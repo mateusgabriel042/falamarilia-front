@@ -5,8 +5,10 @@ import Maps from 'views/examples/Maps.js'
 import Login from 'views/examples/Login.js'
 import Solicitations from 'components/Solicitations/Solicitations'
 import Services from 'components/Services/Services'
+import Notices from 'components/Notices/Notices'
 import SolicitationIntern from 'components/Solicitations/SolicitationIntern'
 import ServicesIntern from 'components/Services/ServicesIntern'
+import NoticeIntern from 'components/Notices/NoticeIntern'
 
 const solicitations = {
   title: 'Solicitações',
@@ -18,12 +20,31 @@ const services = {
   header: ['Nome', 'Cor', 'Ativo', 'Icone', 'Data'],
 }
 
+const comunicates = {
+  title: 'Comunicados',
+  header: ['Título', 'Expira Em', 'Data'],
+}
+
 var routes = [
   {
     path: '/index',
     name: 'Dashboard',
     icon: 'ni ni-tv-2 text-primary',
     component: Index,
+    layout: '/admin',
+  },
+  {
+    path: '/comunicates',
+    name: 'Comunicados',
+    icon: 'ni ni-single-copy-04 text-primary',
+    component: (props) => <Notices {...props} data={comunicates} />,
+    layout: '/admin',
+  },
+  {
+    path: '/comunicates/:id',
+    name: 'Comunicados',
+    icon: 'ni ni-single-copy-04 text-primary',
+    component: (props) => <NoticeIntern {...props} />,
     layout: '/admin',
   },
   {

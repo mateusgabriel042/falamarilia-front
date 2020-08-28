@@ -20,7 +20,7 @@ import {
 } from 'variables/charts.js'
 import { toast } from 'react-toastify'
 import Header from 'components/Headers/Header.js'
-import LastSolicitations from 'components/LastSolicitations/LastSolicitations.js'
+import LastSolicitations from 'components/Solicitations/LastSolicitations.js'
 
 import api from '../services/api'
 
