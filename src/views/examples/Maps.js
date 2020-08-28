@@ -162,7 +162,7 @@ const MapWrapper = withScriptjs(
                           <img
                             src={
                               element.photo !== 'noImage'
-                                ? 'http://192.168.0.23:8080/' + element.photo
+                                ? 'http://177.85.33.222:8080/' + element.photo
                                 : require('assets/img/theme/noImage.jpg')
                             }
                             alt={element.protocol}

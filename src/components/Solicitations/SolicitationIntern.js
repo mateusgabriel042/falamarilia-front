@@ -240,7 +240,7 @@ const SolicitationIntern = (props) => {
                           <img
                             src={
                               photo !== 'noImage'
-                                ? 'http://192.168.0.23:8080/' + photo
+                                ? 'http://177.85.33.222:8080/' + photo
                                 : require('assets/img/theme/noImage.jpg')
                             }
                             alt=""
