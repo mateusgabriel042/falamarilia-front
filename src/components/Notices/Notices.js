@@ -26,7 +26,6 @@ import Moment from 'moment'
 import 'moment/locale/pt-br'
 
 import api from '../../services/api'
-var dateFormat = require('dateformat')
 
 const Notices = (props) => {
   const [notices, setNotices] = useState([])
