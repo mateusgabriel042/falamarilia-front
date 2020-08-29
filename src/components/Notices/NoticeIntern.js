@@ -119,7 +119,7 @@ const NoticeIntern = (props) => {
                     <Col lg="12" xl="12">
                       <FormGroup>
                         <p style={{ fontSize: 14 }}>
-                          <b>*Por padrão os comunicados expiram em 5 dias.</b>
+                          <b>*Por padrão os comunicados expiram em 10 dias.</b>
                         </p>
                         <Label for="title">Título</Label>
                         <Input
