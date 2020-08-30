@@ -139,7 +139,7 @@ const Notices = (props) => {
               title: title,
               description: description,
               type: 'Notícia',
-              expired_at: Moment(expired).format('x'),
+              expired_at: Moment(expired).format('YYYY-MM-DD HH:mm:ss'),
             },
             {
               headers: {
