@@ -82,8 +82,7 @@ const NoticeIntern = (props) => {
               title: title,
               description: description,
               type: 'Notícia',
-              expired_at: expired,
-              // expired_at: Moment('YYYY-MM-DD hh:mm:ss').add('days', 5),
+              expired_at: Moment(expired).format('YYYY-MM-DD 00:mm:ss'),
             },
             { headers: headers }
           )
@@ -116,11 +115,8 @@ const NoticeIntern = (props) => {
               <CardFooter>
                 <Form role="form">
                   <Row>
-                    <Col lg="12" xl="12">
+                    <Col lg="9" xl="9">
                       <FormGroup>
-                        <p style={{ fontSize: 14 }}>
-                          <b>*Por padrão os comunicados expiram em 10 dias.</b>
-                        </p>
                         <Label for="title">Título</Label>
                         <Input
                           id="title"
@@ -128,6 +124,19 @@ const NoticeIntern = (props) => {
                           type="text"
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="3" xl="3">
+                      <FormGroup>
+                        <Label for="expired_at">Dt. de Expiração</Label>
+                        <Input
+                          id="expired_at"
+                          placeholder="Dt. de Expiração"
+                          type="date"
+                          min={Moment().format('YYYY-MM-DD')}
+                          value={Moment(expired).format('YYYY-MM-DD')}
+                          onChange={(e) => setExpired(e.target.value)}
                         />
                       </FormGroup>
                     </Col>

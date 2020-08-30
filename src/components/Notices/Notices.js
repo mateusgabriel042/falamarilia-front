@@ -34,6 +34,7 @@ const Notices = (props) => {
   const [userData, setUserData] = useState('')
   const [modal, setModal] = useState(false)
   const [date, setDate] = useState(new Date())
+  const [expired, setExpired] = useState('')
 
   Moment.locale('pt-br')
 
@@ -71,6 +72,31 @@ const Notices = (props) => {
     loadNotices()
   }, [userData])
 
+  const load = async () => {
+    try {
+      const userToken = JSON.parse(userData)
+      await api
+        .get(`/notice`, {
+          headers: {
+            Authorization: 'Bearer ' + userToken.token,
+          },
+        })
+        .then((res) => {
+          try {
+            console.log(res.data)
+            if (res.data) {
+              setNotices(res.data)
+            }
+          } catch (err) {
+            toast.error('Houve um problema ao carregar as notícias.')
+          }
+        })
+        .catch((err) => {
+          toast.error('Houve um problema ao carregar as notícias.')
+        })
+    } catch (_err) {}
+  }
+
   const handleRemove = async (e, noticeId) => {
     e.preventDefault()
     try {
@@ -83,18 +109,9 @@ const Notices = (props) => {
         })
         .then(async (res) => {
           try {
-            const noticeRemove = notices.filter((item, idx) => {
-              return item.id === noticeId ? idx : -1
-            })
-
-            if (noticeRemove >= 0) {
-              delete notices[noticeRemove]
-            }
+            load()
 
             toast.success('Comunicado removido com sucesso.')
-            setTimeout(() => {
-              window.location.reload(true)
-            }, 2000)
           } catch (err) {
             toast.error('Houve um problema ao remover o comunicado.')
           }
@@ -122,6 +139,7 @@ const Notices = (props) => {
               title: title,
               description: description,
               type: 'Notícia',
+              expired_at: Moment(expired).format('YYYY-MM-DD 00:mm:ss'),
             },
             {
               headers: {
@@ -162,6 +180,21 @@ const Notices = (props) => {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg="12" xl="12">
+              <FormGroup>
+                <Label for="expired_at">Dt. de Expiração</Label>
+                <Input
+                  id="expired_at"
+                  placeholder="Dt. de Expiração"
+                  type="date"
+                  min={Moment().format('YYYY-MM-DD')}
+                  value={Moment(expired).format('YYYY-MM-DD')}
+                  onChange={(e) => setExpired(e.target.value)}
                 />
               </FormGroup>
             </Col>
