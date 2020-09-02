@@ -26,7 +26,7 @@ let total = 0
 
 const MapWrapper = withScriptjs(
   withGoogleMap((props) => {
-    const [isOpen, setIsOpen] = useState({ marker: 0, isOpen: true })
+    const [isOpen, setIsOpen] = useState({ marker: 0, isOpen: false })
 
     const handleOpenInfoWindow = (idx) => {
       setIsOpen({
