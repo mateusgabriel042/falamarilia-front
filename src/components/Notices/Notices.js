@@ -133,7 +133,11 @@ const Notices = (props, { history }) => {
   const handleCreateNotice = async (e) => {
     e.preventDefault()
 
-    if (title.length === 0 || description.length === 0) {
+    if (
+      title.length === 0 ||
+      description.length === 0 ||
+      expired.length === 0
+    ) {
       toast.error('Preencha todos os campos para continuar!')
     } else {
       try {
@@ -157,6 +161,7 @@ const Notices = (props, { history }) => {
             try {
               toast.success('Comunicado cadastrado com sucesso!')
               load()
+              toggleModal()
             } catch (err) {}
           })
           .catch((err) => {
