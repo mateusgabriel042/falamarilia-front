@@ -24,7 +24,7 @@ import 'moment/locale/pt-br'
 
 import api from '../../services/api'
 
-const ServicesIntern = (props) => {
+const ServicesIntern = (props, { history }) => {
   const activeOptions = [
     { value: 0, label: 'Não' },
     { value: 1, label: 'Sim' },
@@ -92,7 +92,24 @@ const ServicesIntern = (props) => {
       } catch (_err) {}
     }
     loadServices()
-  }, [props.location, props.location.state, props.match.params.id, userData])
+
+    const validate = () => {
+      const service = JSON.parse(userData)
+
+      return service.service !== -1 ? props.history.push('/admin') : ''
+    }
+
+    setTimeout(() => {
+      validate()
+    }, 1000)
+  }, [
+    history,
+    props.history,
+    props.location,
+    props.location.state,
+    props.match.params.id,
+    userData,
+  ])
 
   const handleCreateCategory = async (e) => {
     e.preventDefault()

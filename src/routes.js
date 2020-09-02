@@ -1,8 +1,10 @@
 import React from 'react'
 import Index from 'views/Index.js'
-import Profile from 'views/examples/Profile.js'
-import Maps from 'views/examples/Maps.js'
-import Login from 'views/examples/Login.js'
+import Profile from 'views/examples/Profile'
+import Users from 'components/Users/Users'
+import UsersIntern from 'components/Users/UsersIntern'
+import Maps from 'views/examples/Maps'
+import Login from 'views/examples/Login'
 import Solicitations from 'components/Solicitations/Solicitations'
 import Services from 'components/Services/Services'
 import Notices from 'components/Notices/Notices'
@@ -23,6 +25,11 @@ const services = {
 const comunicates = {
   title: 'Comunicados',
   header: ['Título', 'Expira Em', 'Data'],
+}
+
+const users = {
+  title: 'Usuários',
+  header: ['Nome', 'E-mail', 'Secretaria', 'Dt. Cadastro'],
 }
 
 var routes = [
@@ -80,6 +87,20 @@ var routes = [
     name: 'Mapa de Solicitações',
     icon: 'ni ni-pin-3 text-primary',
     component: Maps,
+    layout: '/admin',
+  },
+  {
+    path: '/users',
+    name: 'Usuários',
+    icon: 'ni ni-key-25 text-primary',
+    component: (props) => <Users {...props} data={users} />,
+    layout: '/admin',
+  },
+  {
+    path: '/users/:id',
+    name: 'Usuários',
+    icon: 'ni ni-single-copy-04 text-primary',
+    component: (props) => <UsersIntern {...props} />,
     layout: '/admin',
   },
   {

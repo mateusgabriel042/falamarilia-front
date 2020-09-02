@@ -22,7 +22,6 @@ const authenticated = async () => {
         }
       })
       .catch((err) => {
-        console.log(err.response)
         localStorage.clear()
         return false
       })

@@ -32,7 +32,7 @@ import 'moment/locale/pt-br'
 
 import api from '../../services/api'
 
-const Services = (props, { history }) => {
+const Users = (props, { history }) => {
   const activeOptions = [
     { value: 0, label: 'Não' },
     { value: 1, label: 'Sim' },
@@ -53,13 +53,18 @@ const Services = (props, { history }) => {
     'traffic-light',
   ]
 
-  const [services, setServices] = useState([])
+  const [users, setUsers] = useState([])
   const [userData, setUserData] = useState('')
+  const [services, setServices] = useState([])
+  const [service, setService] = useState('')
   const [modal, setModal] = useState(false)
   const [active, setActive] = useState(1)
-  const [icon, setIcon] = useState('home')
   const [color, setColor] = useState('')
   const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [cpf, setCpf] = useState('')
+  const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
 
   Moment.locale('pt-br')
 
@@ -72,6 +77,31 @@ const Services = (props, { history }) => {
       const service = JSON.parse(userData)
 
       return service.service !== -1 ? props.history.push('/admin') : ''
+    }
+
+    const loadUsers = async () => {
+      try {
+        const userToken = JSON.parse(userData)
+
+        await api
+          .get('/list', {
+            headers: {
+              Authorization: 'Bearer ' + userToken.token,
+            },
+          })
+          .then((res) => {
+            try {
+              if (res.data) {
+                setUsers(res.data)
+              }
+            } catch (err) {
+              toast.error('Houve um problema ao carregar as secretarias.')
+            }
+          })
+          .catch((err) => {
+            toast.error('Houve um problema ao carregar as secretarias.')
+          })
+      } catch (_err) {}
     }
 
     const loadServices = async () => {
@@ -101,6 +131,7 @@ const Services = (props, { history }) => {
 
     loadToken()
     loadServices()
+    loadUsers()
 
     setTimeout(() => {
       validate()
@@ -109,14 +140,15 @@ const Services = (props, { history }) => {
 
   const toggleModal = () => setModal(!modal)
 
-  const handleCreateService = async (e) => {
+  const handleCreateUser = async (e) => {
     e.preventDefault()
 
     if (
       name.length === 0 ||
-      color.length === 0 ||
-      icon.length === 0 ||
-      active.length === 0
+      email.length === 0 ||
+      password.length === 0 ||
+      phone.length === 0 ||
+      cpf.length === 0
     ) {
       toast.error('Preencha todos os campos para continuar!')
     } else {
@@ -124,12 +156,18 @@ const Services = (props, { history }) => {
         const userToken = JSON.parse(userData)
         await api
           .post(
-            '/service',
+            '/auth/register',
             {
-              name: name,
-              color: color,
-              icon: icon,
-              active: active,
+              name,
+              email,
+              password,
+              password_confirmation: password,
+              genre: 'others',
+              phone,
+              cpf,
+              type: '2',
+              resident: 1,
+              service,
             },
             {
               headers: {
@@ -139,70 +177,29 @@ const Services = (props, { history }) => {
           )
           .then((res) => {
             try {
-              toast.success('Secretaria cadastrada com sucesso!')
-              services.push(res.data)
+              toast.success('Usuário cadastrado com sucesso!')
+              window.location.reload()
               toggleModal()
             } catch (err) {
-              toast.error('Houve um problema ao cadastrar a secretaria.')
+              toast.error('Houve um problema ao cadastrar o usuário.')
             }
           })
           .catch((err) => {
-            toast.error('Houve um problema ao cadastrar a secretaria.')
+            toast.error('Houve um problema ao cadastrar o usuário.')
           })
       } catch (_err) {}
     }
   }
 
-  const handleRemoveService = async (e, serviceId) => {
+  const handlePasswordReset = async (e, userEmail) => {
     e.preventDefault()
     try {
       const userToken = JSON.parse(userData)
       await api
-        .delete(`/service/${serviceId}`, {
-          headers: {
-            Authorization: 'Bearer ' + userToken.token,
-          },
-        })
-        .then(async (res) => {
-          try {
-            const serviceRemove = services.filter((item, idx) => {
-              return item.id === serviceId ? idx : -1
-            })
-
-            if (serviceRemove >= 0) {
-              delete services[serviceRemove]
-            }
-
-            toast.success('Secretaria removida com sucesso.')
-          } catch (err) {
-            toast.error('Houve um problema ao remover a secretaria.')
-          }
-        })
-        .catch((err) => {
-          toast.error('Houve um problema ao remover a secretaria.')
-        })
-    } catch (_err) {}
-  }
-
-  const handleActiveService = async (
-    e,
-    serviceId,
-    active,
-    icon,
-    color,
-    name
-  ) => {
-    // e.preventDefault()
-    try {
-      const userToken = JSON.parse(userData)
-      await api
-        .put(
-          `/service/${serviceId}`,
+        .post(
+          '/password/send',
           {
-            active: active === 0 ? 1 : 0,
-            icon: icon,
-            name: name,
-            color: color,
+            email: userEmail,
           },
           {
             headers: {
@@ -212,14 +209,44 @@ const Services = (props, { history }) => {
         )
         .then(async (res) => {
           try {
-            window.location.reload(true)
-            toast.success('Secretaria atualizada com sucesso.')
+            toast.success('Senha resetada e enviada por e-mail com sucesso.')
           } catch (err) {
-            toast.error('Houve um problema ao atualizada a secretaria.')
+            toast.error('Houve um problema ao resetar a senha.')
           }
         })
         .catch((err) => {
-          toast.error('Houve um problema ao atualizada a secretaria.')
+          toast.error('Houve um problema ao resetar a senha.')
+        })
+    } catch (_err) {}
+  }
+
+  const handleRemoveUser = async (e, userId) => {
+    e.preventDefault()
+    try {
+      const userToken = JSON.parse(userData)
+      await api
+        .delete(`/delete/${userId}`, {
+          headers: {
+            Authorization: 'Bearer ' + userToken.token,
+          },
+        })
+        .then(async (res) => {
+          try {
+            const userRemove = users.filter((item, idx) => {
+              return item.id === userId ? idx : -1
+            })
+
+            if (userRemove >= 0) {
+              delete users[userRemove]
+            }
+
+            toast.success('Usuário removida com sucesso.')
+          } catch (err) {
+            toast.error('Houve um problema ao remover o usuário.')
+          }
+        })
+        .catch((err) => {
+          toast.error('Houve um problema ao remover o usuário.')
         })
     } catch (_err) {}
   }
@@ -227,9 +254,7 @@ const Services = (props, { history }) => {
   return (
     <>
       <Modal isOpen={modal} toggle={toggleModal}>
-        <ModalHeader toggle={toggleModal}>
-          Cadastrar Nova Secretaria
-        </ModalHeader>
+        <ModalHeader toggle={toggleModal}>Cadastrar Novo Usuário</ModalHeader>
         <ModalBody>
           <Row>
             <Col lg="6" xl="6">
@@ -246,76 +271,81 @@ const Services = (props, { history }) => {
             </Col>
             <Col lg="6" xl="6">
               <FormGroup>
-                <Label for="color">Icone</Label>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i
-                        style={{
-                          fontSize: '20px',
-                        }}
-                        class={'mdi mdi-' + icon}
-                      ></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Cor"
-                    type="select"
-                    onChange={(e) => setIcon(e.target.value)}
-                  >
-                    {icons.map((element, idx) => {
-                      return (
-                        <option key={idx} value={element}>
-                          {element}
-                        </option>
-                      )
-                    })}
-                  </Input>
-                </InputGroup>
+                <Label for="email">E-mail</Label>
+                <Input
+                  id="email"
+                  placeholder="E-mail"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col lg="6" xl="6">
               <FormGroup>
-                <Label for="color">Cor</Label>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i style={{ color: color }} className="ni ni-palette" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Cor"
-                    type="text"
-                    value={color}
-                    maxLength="7"
-                    onChange={(e) => setColor(e.target.value)}
-                  />
-                </InputGroup>
+                <Label for="password">Senha</Label>
+                <Input
+                  id="password"
+                  placeholder="Senha"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </FormGroup>
             </Col>
             <Col lg="6" xl="6">
               <FormGroup>
-                <Label for="active">Ativa</Label>
+                <Label for="email">CPF</Label>
                 <Input
-                  id="active"
-                  placeholder="Ativo"
+                  id="cpf"
+                  placeholder="CPF Válido"
+                  type="text"
+                  value={cpf}
+                  onChange={(e) => setCpf(e.target.value)}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg="6" xl="6">
+              <FormGroup>
+                <Label for="phone">Telefone</Label>
+                <Input
+                  id="phone"
+                  placeholder="Telefone Válido"
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </FormGroup>
+            </Col>
+            <Col lg="6" xl="6">
+              <FormGroup>
+                <Label for="service">Secretaria</Label>
+                <Input
+                  id="service"
+                  placeholder="Secretaria"
                   type="select"
-                  value={active}
-                  onChange={(e) => setActive(e.target.value)}
+                  value={services}
+                  onChange={(e) => setService(e.target.value)}
                 >
-                  <option value={1} selected>
-                    Sim
-                  </option>
-                  <option value={0}>Não</option>
+                  <option value="-1">{'Administrador'}</option>
+                  {services.map((element, idx) => {
+                    return (
+                      <option key={idx} value={element.id}>
+                        {element.name}
+                      </option>
+                    )
+                  })}
                 </Input>
               </FormGroup>
             </Col>
           </Row>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={(e) => handleCreateService(e)}>
+          <Button color="primary" onClick={(e) => handleCreateUser(e)}>
             Criar
           </Button>{' '}
           <Button color="secondary" onClick={toggleModal}>
@@ -347,7 +377,7 @@ const Services = (props, { history }) => {
                       color="primary"
                       onClick={() => toggleModal()}
                     >
-                      Nova Secretaria
+                      Novo Usuário
                     </Button>
                   </Col>
                 </Row>
@@ -366,42 +396,22 @@ const Services = (props, { history }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {services.map((element, idx) => {
+                  {users.map((element, idx) => {
                     return (
                       <tr key={idx}>
                         <th style={{ fontWeight: 'bold' }} scope="row">
                           {element.name}
                         </th>
+                        <td>{element.email}</td>
                         <td
-                          style={{ color: element.color, fontWeight: 'bold' }}
+                          style={{
+                            color: element.service?.color,
+                            fontWeight: 'bold',
+                          }}
                         >
-                          {element.color}
-                        </td>
-                        <td
-                          style={{ display: 'flex', justifyContent: 'center' }}
-                        >
-                          <Badge color="" className="badge-dot mr-4">
-                            <i
-                              className={
-                                element.active === 1
-                                  ? 'bg-success'
-                                  : element.active === 0
-                                  ? 'bg-danger'
-                                  : 'bg-warning'
-                              }
-                            />
-                            {element.status}
-                          </Badge>
-                        </td>
-                        <td>
-                          <i
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              fontSize: '30px',
-                            }}
-                            class={'mdi mdi-' + element.icon}
-                          ></i>
+                          {element.service?.name
+                            ? element.service?.name
+                            : 'Administração'}
                         </td>
                         <td>
                           {Moment(element.created_at).format(
@@ -422,7 +432,7 @@ const Services = (props, { history }) => {
                               <DropdownItem onClick={(e) => e.preventDefault()}>
                                 <Link
                                   to={{
-                                    pathname: `/admin/services/${element.id}`,
+                                    pathname: `/admin/users/${element.id}`,
                                   }}
                                 >
                                   Visualizar
@@ -430,22 +440,13 @@ const Services = (props, { history }) => {
                               </DropdownItem>
                               <DropdownItem
                                 onClick={(e) =>
-                                  handleActiveService(
-                                    e,
-                                    element.id,
-                                    element.active,
-                                    element.icon,
-                                    element.color,
-                                    element.name
-                                  )
+                                  handlePasswordReset(e, element.email)
                                 }
                               >
-                                <Link>Ativar/Desativar</Link>
+                                <Link>Resetar Senha(E-mail)</Link>
                               </DropdownItem>
                               <DropdownItem
-                                onClick={(e) =>
-                                  handleRemoveService(e, element.id)
-                                }
+                                onClick={(e) => handleRemoveUser(e, element.id)}
                               >
                                 <Link>Remover</Link>
                               </DropdownItem>
@@ -466,4 +467,4 @@ const Services = (props, { history }) => {
   )
 }
 
-export default Services
+export default Users

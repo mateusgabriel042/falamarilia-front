@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink as NavLinkRRD, Link } from 'react-router-dom'
 import { PropTypes } from 'prop-types'
 
@@ -26,6 +26,15 @@ import {
 
 const Sidebar = (props) => {
   const [collapseOpen, setCollapseOpen] = useState(false)
+  const [userData, setUserData] = useState('')
+
+  useEffect(() => {
+    const loadToken = () => {
+      setUserData(JSON.parse(localStorage.getItem('@user_data')))
+    }
+
+    loadToken()
+  }, [])
 
   // toggles collapse between opened and closed (true/false)
   const toggleCollapse = () => {
@@ -40,23 +49,33 @@ const Sidebar = (props) => {
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
-      return (
-        <NavItem key={key}>
-          {!(prop.path.includes('login') || prop.path.includes(':id')) ? (
-            <NavLink
-              to={prop.layout + prop.path}
-              tag={NavLinkRRD}
-              onClick={closeCollapse}
-              activeClassName="active"
-            >
-              <i className={prop.icon} />
-              {prop.name}
-            </NavLink>
-          ) : (
-            ''
-          )}
-        </NavItem>
-      )
+      if (
+        (userData.service !== -1 &&
+          !(
+            prop.path.includes('comunicates') ||
+            prop.path.includes('users') ||
+            prop.path.includes('services')
+          )) ||
+        userData.service === -1
+      ) {
+        return (
+          <NavItem key={key}>
+            {!(prop.path.includes('login') || prop.path.includes(':id')) ? (
+              <NavLink
+                to={prop.layout + prop.path}
+                tag={NavLinkRRD}
+                onClick={closeCollapse}
+                activeClassName="active"
+              >
+                <i className={prop.icon} />
+                {prop.name}
+              </NavLink>
+            ) : (
+              ''
+            )}
+          </NavItem>
+        )
+      }
     })
   }
   const { routes, logo } = props

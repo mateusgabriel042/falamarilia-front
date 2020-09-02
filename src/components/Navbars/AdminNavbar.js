@@ -51,7 +51,7 @@ const AdminNavbar = (props, { history }) => {
 
   const handleLogout = async () => {
     localStorage.removeItem('@user_data')
-    history.push('/auth')
+    history.push('/auth/login')
   }
 
   return (

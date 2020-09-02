@@ -22,7 +22,6 @@ const Login = ({ history }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    console.log(authenticated())
     authenticated().then((res) => {
       if (res === true) history.push('/admin')
       setIsAuthenticated(true)
@@ -44,9 +43,13 @@ const Login = ({ history }) => {
           })
           .then(async (res) => {
             try {
-              localStorage.setItem('@user_data', JSON.stringify(res.data))
-              toast.success('Login efetuado com sucesso!')
-              history.push('/admin')
+              if (res.data.type !== 1) {
+                localStorage.setItem('@user_data', JSON.stringify(res.data))
+                toast.success('Login efetuado com sucesso!')
+                history.push('/admin')
+              } else {
+                toast.warning('Login não encontrado!')
+              }
             } catch (err) {}
           })
           .catch((err) => {

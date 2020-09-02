@@ -21,7 +21,7 @@ import 'moment/locale/pt-br'
 
 import api from '../../services/api'
 
-const NoticeIntern = (props) => {
+const NoticeIntern = (props, { history }) => {
   const [userData, setUserData] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -62,7 +62,16 @@ const NoticeIntern = (props) => {
 
     loadToken()
     loadNotice()
-  }, [props.match.params.id, userData])
+    const validate = () => {
+      const service = JSON.parse(userData)
+
+      return service.service !== -1 ? props.history.push('/admin') : ''
+    }
+
+    setTimeout(() => {
+      validate()
+    }, 1000)
+  }, [history, props.history, props.match.params.id, userData])
 
   const handleSubmit = async (e) => {
     e.preventDefault()

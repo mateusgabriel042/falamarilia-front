@@ -22,18 +22,27 @@ import 'moment/locale/pt-br'
 import api from '../../services/api'
 
 const SolicitationIntern = (props) => {
-  const statusOptions = ['Finalizada', 'Aguardando Resposta', 'Respondida']
+  const statusOptions = [
+    'Finalizada',
+    'Aguardando Resposta',
+    'Respondida',
+    'Em Andamento',
+  ]
 
   const [userData, setUserData] = useState('')
+  const [services, setServices] = useState([])
+  const [responsible, setResponsible] = useState(-1)
   const [status, setStatus] = useState('')
   const [serviceName, setServiceName] = useState('')
   const [categoryName, setCategoryName] = useState('')
   const [userName, setUserName] = useState('')
   const [description, setDescription] = useState('')
+  const [comment, setComment] = useState('')
   const [photo, setPhoto] = useState('')
   const [geolocation, setGeolocation] = useState('')
   const [geoloc, setGeoloc] = useState('')
   const [date, setDate] = useState('')
+  const [read, setRead] = useState(false)
   const [protocol, setProtocol] = useState('')
 
   Moment.locale('pt-br')
@@ -47,6 +56,8 @@ const SolicitationIntern = (props) => {
     const loadSolicitations = async () => {
       try {
         const userToken = JSON.parse(userData)
+        console.log(userToken)
+        setRead(userToken.service !== -1 ? true : false)
         await api
           .get(`/solicitation/admin/${props.match.params.id}`, {
             headers: {
@@ -60,10 +71,12 @@ const SolicitationIntern = (props) => {
                 setCategoryName(res.data[0].category_name)
                 setUserName(res.data[0].user_name)
                 setDescription(res.data[0].description)
+                setComment(res.data[0].comment)
                 setStatus(res.data[0].status)
                 setPhoto(res.data[0].photo)
                 setGeolocation(res.data[0].geolocation)
                 setGeoloc(res.data[0].geoloc)
+                setResponsible(res.data[0].responsible)
                 setDate(res.data[0].created_at)
                 setProtocol(res.data[0].protocol)
               }
@@ -76,7 +89,33 @@ const SolicitationIntern = (props) => {
           })
       } catch (_err) {}
     }
+
+    const loadServices = async () => {
+      try {
+        const userToken = JSON.parse(userData)
+        await api
+          .get(`/service`, {
+            headers: {
+              Authorization: 'Bearer ' + userToken.token,
+            },
+          })
+          .then((res) => {
+            try {
+              if (res.data) {
+                setServices(res.data)
+              }
+            } catch (err) {
+              toast.error('Houve um problema ao carregar a solicitação.')
+            }
+          })
+          .catch((err) => {
+            toast.error('Houve um problema ao carregar a solicitação.')
+          })
+      } catch (_err) {}
+    }
+
     loadSolicitations()
+    loadServices()
   }, [props.match.params.id, userData])
 
   const handleSubmit = async (e, status) => {
@@ -96,6 +135,8 @@ const SolicitationIntern = (props) => {
             `/solicitation/${props.match.params.id}`,
             {
               status: status,
+              comment: comment,
+              responsible: responsible,
             },
             { headers: headers }
           )
@@ -201,7 +242,7 @@ const SolicitationIntern = (props) => {
                   </Row>
                   {geolocation ? (
                     <Row>
-                      <Col lg="12" xl="12">
+                      <Col lg="6" xl="6">
                         <FormGroup>
                           <Label for="address">Endereço</Label>
                           <Input
@@ -213,6 +254,32 @@ const SolicitationIntern = (props) => {
                           />
                         </FormGroup>
                       </Col>
+                      <Col lg="6" xl="6">
+                        <FormGroup>
+                          <Label for="responsible">
+                            Secretaria Responsável
+                          </Label>
+                          <Input
+                            id="responsible"
+                            placeholder="Endereço"
+                            type="select"
+                            value={responsible}
+                            disabled={read}
+                            onChange={(e) => setResponsible(e.target.value)}
+                          >
+                            <option key={-1} value={''} selected>
+                              Não Atribuida
+                            </option>
+                            {services.map((element, idx) => {
+                              return (
+                                <option key={idx} value={element.id}>
+                                  {element.name}
+                                </option>
+                              )
+                            })}
+                          </Input>
+                        </FormGroup>
+                      </Col>
                     </Row>
                   ) : (
                     <></>
@@ -220,14 +287,31 @@ const SolicitationIntern = (props) => {
                   <Row>
                     <Col lg="12" xl="12">
                       <FormGroup>
-                        <Label for="description">Descrição da Solcitação</Label>
+                        <Label for="description">
+                          Descrição da Solicitação
+                        </Label>
                         <Input
                           id="description"
-                          placeholder="Descrição da Solcitação"
+                          placeholder="Descrição da Solicitação"
                           type="textarea"
                           rows={6}
                           readOnly={true}
                           value={description}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="12" xl="12">
+                      <FormGroup>
+                        <Label for="comment">Resposta da Solicitação</Label>
+                        <Input
+                          id="comment"
+                          placeholder="Resposta da Solicitação"
+                          type="textarea"
+                          rows={6}
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
                         />
                       </FormGroup>
                     </Col>

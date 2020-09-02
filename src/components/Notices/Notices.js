@@ -27,7 +27,7 @@ import 'moment/locale/pt-br'
 
 import api from '../../services/api'
 
-const Notices = (props) => {
+const Notices = (props, { history }) => {
   const [notices, setNotices] = useState([])
   const [title, setTitle] = useState([])
   const [description, setDescription] = useState([])
@@ -54,7 +54,6 @@ const Notices = (props) => {
           })
           .then((res) => {
             try {
-              console.log(res.data)
               if (res.data) {
                 setNotices(res.data)
               }
@@ -70,7 +69,16 @@ const Notices = (props) => {
 
     loadToken()
     loadNotices()
-  }, [userData])
+    const validate = () => {
+      const service = JSON.parse(userData)
+
+      return service.service !== -1 ? props.history.push('/admin') : ''
+    }
+
+    setTimeout(() => {
+      validate()
+    }, 1000)
+  }, [history, props.history, userData])
 
   const load = async () => {
     try {
@@ -83,7 +91,6 @@ const Notices = (props) => {
         })
         .then((res) => {
           try {
-            console.log(res.data)
             if (res.data) {
               setNotices(res.data)
             }

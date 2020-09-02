@@ -21,6 +21,8 @@ import api from '../../services/api'
 const Profile = (props, { history }) => {
   const [name, setName] = useState('')
   const [userName, setUserName] = useState('')
+  const [userService, setUserService] = useState('')
+  const [userType, setUserType] = useState('')
   const [email, setEmail] = useState('')
   const [cpf, setCpf] = useState('')
   const [phone, setPhone] = useState('')
@@ -48,12 +50,14 @@ const Profile = (props, { history }) => {
           .then(async (res) => {
             try {
               const data = res.data
-
+              console.log(data.created_at)
               setName(data.name)
               setUserName(data.name)
               setEmail(data.email)
               setCpf(data.cpf)
               setPhone(data.phone)
+              setUserService(data.service)
+              userType(data.type)
               setDate(data.created_at)
             } catch (err) {}
           })
@@ -65,7 +69,7 @@ const Profile = (props, { history }) => {
 
     loadToken()
     loadProfile()
-  }, [userData])
+  }, [userData, userType])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -148,12 +152,16 @@ const Profile = (props, { history }) => {
                   <h3>{userName}</h3>
                   <div className="h5 font-weight-300">
                     <i className="ni location_pin mr-2" />
-                    {'{profile.office}'}
+                    {userService}
+                  </div>
+                  <div className="h5 font-weight-300">
+                    <i className="ni location_pin mr-2" />
+                    {userType ? 'Gestor' : 'Administrador'}
                   </div>
                   <hr className="my-4" />
                   <div className="h5 mt-4">
                     <i className="ni business_briefcase-24 mr-2" />
-                    Usuário desde: {Moment(date).format('DD/MM/YYYY')}
+                    Usuário desde: {Moment(date).format('DD/MM/YYYY - HH:mm')}
                   </div>
                 </div>
               </CardBody>
