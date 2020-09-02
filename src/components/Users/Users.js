@@ -167,7 +167,7 @@ const Users = (props, { history }) => {
               cpf,
               type: '2',
               resident: 1,
-              service,
+              service: service ? Number(service) : -1,
             },
             {
               headers: {
