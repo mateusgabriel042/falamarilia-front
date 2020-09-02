@@ -14,7 +14,7 @@ import {
 
 import api from '../../services/api'
 
-const AdminNavbar = (props, { history }) => {
+const AdminNavbar = (props) => {
   const [profile, setProfile] = useState('')
   const [userData, setUserData] = useState('')
 
@@ -51,7 +51,7 @@ const AdminNavbar = (props, { history }) => {
 
   const handleLogout = async () => {
     localStorage.removeItem('@user_data')
-    history.push('/auth/login')
+    props.history.push('/auth/login')
   }
 
   return (

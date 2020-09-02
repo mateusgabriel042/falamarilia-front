@@ -180,12 +180,28 @@ const Users = (props, { history }) => {
               toast.success('Usuário cadastrado com sucesso!')
               window.location.reload()
               toggleModal()
-            } catch (err) {
-              toast.error('Houve um problema ao cadastrar o usuário.')
-            }
+            } catch (err) {}
           })
           .catch((err) => {
-            toast.error('Houve um problema ao cadastrar o usuário.')
+            const response = err.response
+            let error = 'Houve um problema ao cadastrar o usuário.'
+
+            if (response && response.status == 422 && response.data) {
+              const data = response.data
+
+              if (data.email) {
+                error = data.email[0]
+              } else if (data.cpf) {
+                error = data.cpf[0]
+              } else if (data.phone) {
+                error = data.phone[0]
+              } else if (data.password) {
+                error = data.password[0]
+              } else if (data.name) {
+                error = data.name[0]
+              }
+            }
+            toast.error(error)
           })
       } catch (_err) {}
     }
@@ -240,7 +256,7 @@ const Users = (props, { history }) => {
               delete users[userRemove]
             }
 
-            toast.success('Usuário removida com sucesso.')
+            toast.success('Usuário removido com sucesso.')
           } catch (err) {
             toast.error('Houve um problema ao remover o usuário.')
           }
@@ -297,12 +313,14 @@ const Users = (props, { history }) => {
             </Col>
             <Col lg="6" xl="6">
               <FormGroup>
-                <Label for="email">CPF</Label>
+                <Label for="email">CPF (Somente Números)</Label>
                 <Input
                   id="cpf"
-                  placeholder="CPF Válido"
+                  placeholder="13719380084"
                   type="text"
                   value={cpf}
+                  maxLength="11"
+                  minLength="11"
                   onChange={(e) => setCpf(e.target.value)}
                 />
               </FormGroup>
@@ -314,9 +332,10 @@ const Users = (props, { history }) => {
                 <Label for="phone">Telefone</Label>
                 <Input
                   id="phone"
-                  placeholder="Telefone Válido"
+                  placeholder="11988367743"
                   type="text"
                   value={phone}
+                  maxLength="11"
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </FormGroup>
