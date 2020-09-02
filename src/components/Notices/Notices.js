@@ -117,7 +117,6 @@ const Notices = (props, { history }) => {
         .then(async (res) => {
           try {
             load()
-
             toast.success('Comunicado removido com sucesso.')
           } catch (err) {
             toast.error('Houve um problema ao remover o comunicado.')
@@ -157,14 +156,21 @@ const Notices = (props, { history }) => {
           .then((res) => {
             try {
               toast.success('Comunicado cadastrado com sucesso!')
-              notices.push(res.data)
-              toggleModal()
-            } catch (err) {
-              toast.error('Houve um problema ao cadastrar o comunicado.')
-            }
+              load()
+            } catch (err) {}
           })
           .catch((err) => {
-            toast.error('Houve um problema ao cadastrar o comunicado.')
+            const response = err.response
+            let error = 'Houve um problema ao cadastrar o comunicado.'
+
+            if (response && response.status == 400 && response.data) {
+              const data = response.data
+
+              if (data.description) {
+                error = data.description[0]
+              }
+            }
+            toast.error(error)
           })
       } catch (_err) {}
     }
