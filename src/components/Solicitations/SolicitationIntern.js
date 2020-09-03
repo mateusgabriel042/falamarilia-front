@@ -137,6 +137,7 @@ const SolicitationIntern = (props) => {
               status: status,
               comment: comment,
               responsible: responsible,
+              service_id: responsible,
             },
             { headers: headers }
           )
