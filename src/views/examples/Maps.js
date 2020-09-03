@@ -87,6 +87,9 @@ const MapWrapper = withScriptjs(
       >
         {props.solicitations ? (
           props.solicitations.map((element, idx) => {
+            if (element.geoloc === '') {
+              return
+            }
             const geoloc = JSON.parse(element.geoloc)
             return (
               <Marker
