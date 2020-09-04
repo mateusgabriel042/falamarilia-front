@@ -34,6 +34,7 @@ const SolicitationIntern = (props) => {
   const [responsible, setResponsible] = useState(-1)
   const [status, setStatus] = useState('')
   const [serviceName, setServiceName] = useState('')
+  const [serviceId, setServiceId] = useState('')
   const [categoryName, setCategoryName] = useState('')
   const [userName, setUserName] = useState('')
   const [description, setDescription] = useState('')
@@ -68,6 +69,7 @@ const SolicitationIntern = (props) => {
             try {
               if (res.data) {
                 setServiceName(res.data[0].service_name)
+                setServiceId(res.data[0].service_id)
                 setCategoryName(res.data[0].category_name)
                 setUserName(res.data[0].user_name)
                 setDescription(res.data[0].description)
@@ -137,7 +139,7 @@ const SolicitationIntern = (props) => {
               status: status,
               comment: comment,
               responsible: responsible,
-              service_id: responsible,
+              service_id: responsible !== 0 ? responsible : serviceId,
             },
             { headers: headers }
           )
@@ -241,50 +243,48 @@ const SolicitationIntern = (props) => {
                       </FormGroup>
                     </Col>
                   </Row>
-                  {geolocation ? (
-                    <Row>
-                      <Col lg="6" xl="6">
-                        <FormGroup>
-                          <Label for="address">Endereço</Label>
-                          <Input
-                            id="address"
-                            placeholder="Endereço"
-                            type="text"
-                            readOnly={true}
-                            value={geolocation}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6" xl="6">
-                        <FormGroup>
-                          <Label for="responsible">
-                            Secretaria Responsável
-                          </Label>
-                          <Input
-                            id="responsible"
-                            placeholder="Endereço"
-                            type="select"
-                            value={responsible}
-                            disabled={read}
-                            onChange={(e) => setResponsible(e.target.value)}
-                          >
-                            <option key={-1} value={''} selected>
-                              Não Atribuida
-                            </option>
-                            {services.map((element, idx) => {
-                              return (
-                                <option key={idx} value={element.id}>
-                                  {element.name}
-                                </option>
-                              )
-                            })}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  ) : (
-                    <></>
-                  )}
+                  <Row>
+                    <Col lg="6" xl="6">
+                      <FormGroup>
+                        <Label for="address">Endereço</Label>
+                        <Input
+                          id="address"
+                          placeholder="Endereço"
+                          type="text"
+                          readOnly={true}
+                          value={
+                            geolocation
+                              ? geolocation
+                              : 'Usuário não inseriu endereço.'
+                          }
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="6" xl="6">
+                      <FormGroup>
+                        <Label for="responsible">Secretaria Responsável</Label>
+                        <Input
+                          id="responsible"
+                          placeholder="Endereço"
+                          type="select"
+                          value={responsible}
+                          disabled={read}
+                          onChange={(e) => setResponsible(e.target.value)}
+                        >
+                          <option key={-1} value={''} selected>
+                            Não Atribuida
+                          </option>
+                          {services.map((element, idx) => {
+                            return (
+                              <option key={idx} value={element.id}>
+                                {element.name}
+                              </option>
+                            )
+                          })}
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                  </Row>
                   <Row>
                     <Col lg="12" xl="12">
                       <FormGroup>
@@ -305,12 +305,15 @@ const SolicitationIntern = (props) => {
                   <Row>
                     <Col lg="12" xl="12">
                       <FormGroup>
-                        <Label for="comment">Resposta da Solicitação</Label>
+                        <Label for="comment">
+                          Resposta da Solicitação (max. 2000 caracteres)
+                        </Label>
                         <Input
                           id="comment"
                           placeholder="Resposta da Solicitação"
                           type="textarea"
                           rows={6}
+                          maxLength="2000"
                           value={comment}
                           onChange={(e) => setComment(e.target.value)}
                         />

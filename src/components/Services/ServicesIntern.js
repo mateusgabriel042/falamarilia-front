@@ -48,7 +48,7 @@ const ServicesIntern = (props, { history }) => {
   const [active, setActive] = useState('')
   const [activeCategory, setActiveCategory] = useState(1)
   const [categories, setCategories] = useState([])
-  const [icon, setIcon] = useState('')
+  const [icon, setIcon] = useState('home')
   const [iconCategory, setIconCategory] = useState('home')
   const [name, setName] = useState('')
   const [nameCategory, setNameCategory] = useState('')
@@ -232,7 +232,7 @@ const ServicesIntern = (props, { history }) => {
                           </InputGroupAddon>
                           <Input
                             placeholder="Cor"
-                            type="text"
+                            type="color"
                             value={color}
                             maxLength="7"
                             onChange={(e) => setColor(e.target.value)}
@@ -280,8 +280,9 @@ const ServicesIntern = (props, { history }) => {
                             </InputGroupText>
                           </InputGroupAddon>
                           <Input
-                            placeholder="Cor"
+                            placeholder="Icone"
                             type="select"
+                            value={icon}
                             onChange={(e) => setIcon(e.target.value)}
                           >
                             {icons.map((element, idx) => {
@@ -374,7 +375,7 @@ const ServicesIntern = (props, { history }) => {
                               </InputGroupText>
                             </InputGroupAddon>
                             <Input
-                              placeholder="Cor"
+                              placeholder="Icone"
                               type="select"
                               onChange={(e) => setIconCategory(e.target.value)}
                             >

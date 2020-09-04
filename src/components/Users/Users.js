@@ -186,6 +186,34 @@ const Users = (props, { history }) => {
             const response = err.response
             let error = 'Houve um problema ao cadastrar o usuário.'
 
+            console.log(0, response)
+            console.log(1, err)
+            if (response && response.status == 500 && response.data) {
+              const data = response.data
+
+              if (
+                data.message.includes('Duplicate entry') &&
+                data.message.includes('for key') &&
+                data.message.includes('users.users_email_unique')
+              ) {
+                error =
+                  'O e-mail digitado já existe no sistema como munícipe, gestor ou administrador'
+              }
+            }
+
+            if (response && response.status == 400 && response.data) {
+              const data = response.data
+
+              if (
+                data.message.includes('Duplicate entry') &&
+                data.message.includes('for key') &&
+                data.message.includes('profiles.profiles_cpf_unique')
+              ) {
+                error =
+                  'O CPF digitado já existe no sistema cadastrado em outro usuário.'
+              }
+            }
+
             if (response && response.status == 422 && response.data) {
               const data = response.data
 
@@ -203,7 +231,9 @@ const Users = (props, { history }) => {
             }
             toast.error(error)
           })
-      } catch (_err) {}
+      } catch (_err) {
+        console.log(_err)
+      }
     }
   }
 

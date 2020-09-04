@@ -58,7 +58,7 @@ const Services = (props, { history }) => {
   const [modal, setModal] = useState(false)
   const [active, setActive] = useState(1)
   const [icon, setIcon] = useState('home')
-  const [color, setColor] = useState('')
+  const [color, setColor] = useState('#000000')
   const [name, setName] = useState('')
 
   Moment.locale('pt-br')
@@ -287,7 +287,7 @@ const Services = (props, { history }) => {
                   </InputGroupAddon>
                   <Input
                     placeholder="Cor"
-                    type="text"
+                    type="color"
                     value={color}
                     maxLength="7"
                     onChange={(e) => setColor(e.target.value)}
