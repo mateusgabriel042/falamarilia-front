@@ -140,6 +140,10 @@ const ServicesIntern = (props, { history }) => {
           .then(async (res) => {
             categories.push(res.data)
             toast.success('Categoria cadastrada com sucesso!')
+
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500)
           })
           .catch((err) => {
             toast.error('Houve um problema ao cadastrar a categoria!')

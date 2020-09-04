@@ -82,6 +82,9 @@ const ServicesCategories = ({ categories }) => {
             }
 
             toast.success('Categoria removida com sucesso.')
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500);
           } catch (err) {
             toast.error('Houve um problema ao remover a categoria.')
           }
