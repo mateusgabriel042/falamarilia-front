@@ -50,7 +50,6 @@ const Profile = (props, { history }) => {
           .then(async (res) => {
             try {
               const data = res.data
-              console.log(data.created_at)
               setName(data.name)
               setUserName(data.name)
               setEmail(data.email)

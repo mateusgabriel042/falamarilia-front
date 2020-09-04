@@ -57,7 +57,6 @@ const SolicitationIntern = (props) => {
     const loadSolicitations = async () => {
       try {
         const userToken = JSON.parse(userData)
-        console.log(userToken)
         setRead(userToken.service !== -1 ? true : false)
         await api
           .get(`/solicitation/admin/${props.match.params.id}`, {

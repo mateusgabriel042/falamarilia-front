@@ -186,8 +186,6 @@ const Users = (props, { history }) => {
             const response = err.response
             let error = 'Houve um problema ao cadastrar o usuário.'
 
-            console.log(0, response)
-            console.log(1, err)
             if (response && response.status == 500 && response.data) {
               const data = response.data
 
@@ -231,9 +229,7 @@ const Users = (props, { history }) => {
             }
             toast.error(error)
           })
-      } catch (_err) {
-        console.log(_err)
-      }
+      } catch (_err) {}
     }
   }
 
