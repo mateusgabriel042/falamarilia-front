@@ -26,6 +26,7 @@ import api from '../services/api'
 
 const Index = ({ history }) => {
   const [totalOrders, setTotalOrders] = useState([])
+  const [totalOrdersSixMonths, setTotalOrdersSixMonths] = useState([])
   const [userData, setUserData] = useState([])
 
   useEffect(() => {
@@ -104,8 +105,80 @@ const Index = ({ history }) => {
       } catch (_err) {}
     }
 
+    const loadGraphicsSixMonths = async () => {
+      try {
+        const userToken = JSON.parse(userData)
+        await api
+          .get('/badges/groupsolicitations?limit=true', {
+            headers: {
+              Authorization: 'Bearer ' + userToken.token,
+            },
+          })
+          .then(async (res) => {
+            try {
+              if (res.data) {
+                let totalSolicitations = []
+
+                res.data.forEach((element) => {
+                  totalSolicitations.push({
+                    month:
+                      element.month === 'January'
+                        ? 'JAN'
+                        : element.month === 'February'
+                        ? 'FEV'
+                        : element.month === 'March'
+                        ? 'MAR'
+                        : element.month === 'April'
+                        ? 'ABR'
+                        : element.month === 'May'
+                        ? 'MAI'
+                        : element.month === 'June'
+                        ? 'JUN'
+                        : element.month === 'July'
+                        ? 'JUL'
+                        : element.month === 'August'
+                        ? 'AGO'
+                        : element.month === 'September'
+                        ? 'SET'
+                        : element.month === 'October'
+                        ? 'OUT'
+                        : element.month === 'November'
+                        ? 'NOV'
+                        : element.month === 'December'
+                        ? 'DEZ'
+                        : '',
+                    qty: element.data,
+                  })
+                })
+
+                setTotalOrdersSixMonths({
+                  labels: totalSolicitations.map((element) => {
+                    return element.month
+                  }),
+                  datasets: [
+                    {
+                      label: 'Solicitations',
+                      data: totalSolicitations.map((element) => {
+                        return element.qty
+                      }),
+                      maxBarThickness: 10,
+                    },
+                  ],
+                })
+              }
+            } catch (err) {
+              toast.error('Houve um problema ao carregar as estatísticas.')
+            }
+          })
+          .catch((err) => {
+            toast.error('Houve um problema ao carregar as estatísticas.')
+          })
+      } catch (_err) {}
+    }
+
     loadToken()
     loadGraphics()
+    loadGraphicsSixMonths()
   }, [history, userData])
 
   if (window.Chart) {
@@ -160,7 +233,10 @@ const Index = ({ history }) => {
               <CardBody>
                 {/* Chart */}
                 <div className="chart">
-                  <Bar data={totalOrders} options={chartExample2.options} />
+                  <Bar
+                    data={totalOrdersSixMonths}
+                    options={chartExample2.options}
+                  />
                 </div>
               </CardBody>
             </Card>

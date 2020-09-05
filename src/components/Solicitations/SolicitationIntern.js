@@ -229,6 +229,7 @@ const SolicitationIntern = (props) => {
                           placeholder="Status"
                           type="select"
                           value={status}
+                          disabled={read && status === 'Finalizada'}
                           onChange={(e) => handleSubmit(e, e.target.value)}
                         >
                           {statusOptions.map((element, idx) => {
@@ -314,6 +315,7 @@ const SolicitationIntern = (props) => {
                           rows={6}
                           maxLength="2000"
                           value={comment}
+                          disabled={read && status === 'Finalizada'}
                           onChange={(e) => setComment(e.target.value)}
                         />
                       </FormGroup>
