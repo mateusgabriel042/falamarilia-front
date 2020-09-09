@@ -2,6 +2,7 @@ import React from 'react'
 import Index from 'views/Index.js'
 import Profile from 'views/examples/Profile'
 import Users from 'components/Users/Users'
+import Citizens from 'components/Users/Citizens'
 import UsersIntern from 'components/Users/UsersIntern'
 import Maps from 'views/examples/Maps'
 import Login from 'views/examples/Login'
@@ -30,6 +31,11 @@ const comunicates = {
 const users = {
   title: 'Usuários',
   header: ['Nome', 'E-mail', 'Secretaria', 'Dt. Cadastro'],
+}
+
+const citizens = {
+  title: 'Munícipes App',
+  header: ['Nome', 'E-mail', 'CPF', 'Telefone', 'Residente?', 'Dt. Cadastro'],
 }
 
 var routes = [
@@ -101,6 +107,13 @@ var routes = [
     name: 'Usuários',
     icon: 'ni ni-single-copy-04 text-primary',
     component: (props) => <UsersIntern {...props} />,
+    layout: '/admin',
+  },
+  {
+    path: '/citizens',
+    name: 'Munícipes App',
+    icon: 'ni ni-circle-08 text-primary',
+    component: (props) => <Citizens {...props} data={citizens} />,
     layout: '/admin',
   },
   {
