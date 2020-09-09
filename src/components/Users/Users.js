@@ -373,7 +373,6 @@ const Users = (props, { history }) => {
                   id="service"
                   placeholder="Secretaria"
                   type="select"
-                  value={services}
                   onChange={(e) => setService(e.target.value)}
                 >
                   <option value="-1">{'Administrador'}</option>
