@@ -251,6 +251,7 @@ const ServicesIntern = (props, { history }) => {
                           id="active"
                           placeholder="Ativo"
                           type="select"
+                          value={active}
                           onChange={(e) => setActive(e.target.value)}
                         >
                           {activeOptions.map((element, idx) => {
@@ -312,6 +313,10 @@ const ServicesIntern = (props, { history }) => {
                       style={{ display: 'flex', justifyContent: 'flex-end' }}
                     >
                       <FormGroup>
+                        <Button className="my-4" color="success" type="button" onClick={(e) => props.history.push('/admin/services')}>
+                          Voltar
+                        </Button>
+
                         <Button className="my-4" color="primary" type="submit">
                           Salvar
                         </Button>
@@ -402,6 +407,10 @@ const ServicesIntern = (props, { history }) => {
                         style={{ display: 'flex', justifyContent: 'flex-end' }}
                       >
                         <FormGroup>
+                          <Button className="my-4" color="success" type="button" onClick={(e) => props.history.push('/admin/services')}>
+                            Voltar
+                          </Button>
+
                           <Button
                             className="my-4"
                             color="primary"

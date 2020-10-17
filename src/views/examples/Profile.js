@@ -13,7 +13,7 @@ import {
 } from 'reactstrap'
 import UserHeader from 'components/Headers/UserHeader.js'
 import { toast } from 'react-toastify'
-import Moment from 'moment'
+import moment from 'moment'
 import 'moment/locale/pt-br'
 
 import api from '../../services/api'
@@ -31,7 +31,7 @@ const Profile = (props, { history }) => {
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [date, setDate] = useState('')
 
-  Moment.locale('pt-br')
+  moment.locale('pt-br');
 
   useEffect(() => {
     const loadToken = () => {
@@ -48,6 +48,7 @@ const Profile = (props, { history }) => {
             },
           })
           .then(async (res) => {
+            setDate(res.data.created_at)
             try {
               const data = res.data
               setName(data.name)
@@ -57,7 +58,6 @@ const Profile = (props, { history }) => {
               setPhone(data.phone)
               setUserService(data.service)
               userType(data.type)
-              setDate(data.created_at)
             } catch (err) {}
           })
           .catch((err) => {
@@ -98,6 +98,7 @@ const Profile = (props, { history }) => {
               email: email,
               cpf: cpf,
               phone: phone,
+              genre: 'others',
               password: password,
               password_confirmation: password,
             },
@@ -107,7 +108,48 @@ const Profile = (props, { history }) => {
             toast.success('Perfil alterado com sucesso!')
           })
           .catch((err) => {
-            toast.error('Houve um problema ao alterar o seu perfil!')
+            const response = err.response
+            let error = 'Houve um problema ao alterar o seu perfil!'
+
+            if (response && response.status == 500 && response.data) {
+              const data = response.data
+
+              if (
+                data.erro.includes('Duplicate entry') &&
+                data.erro.includes('for key') &&
+                data.erro.includes('profiles_cpf_unique')
+              ) {
+                error =
+                  'O CPF digitado já existe no sistema cadastrado em outro usuário.'
+              }
+
+              if (
+                data.erro.includes('Duplicate entry') &&
+                data.erro.includes('for key') &&
+                data.erro.includes('users_email_unique')
+              ) {
+                error =
+                  'O e-mail digitado já existe no sistema como munícipe, gestor ou administrador'
+              }
+              
+            }
+
+            if (response && response.status == 422 && response.data) {
+              const data = response.data
+
+              if (data.email) {
+                error = data.email[0]
+              } else if (data.cpf) {
+                error = data.cpf[0]
+              } else if (data.phone) {
+                error = data.phone[0]
+              } else if (data.password) {
+                error = data.password[0]
+              } else if (data.name) {
+                error = data.name[0]
+              }
+            }
+            toast.error(error)
           })
       } catch (_err) {
         toast.error('Houve um problema ao alterar o seu perfil!')
@@ -160,7 +202,7 @@ const Profile = (props, { history }) => {
                   <hr className="my-4" />
                   <div className="h5 mt-4">
                     <i className="ni business_briefcase-24 mr-2" />
-                    Usuário desde: {Moment(date).format('DD/MM/YYYY - HH:mm')}
+                    Usuário desde: {moment(date).format('DD/MM/YYYY - HH:mm')}
                   </div>
                 </div>
               </CardBody>

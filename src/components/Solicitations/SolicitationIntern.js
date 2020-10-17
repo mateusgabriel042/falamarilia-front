@@ -173,7 +173,7 @@ const SolicitationIntern = (props) => {
                   <Row>
                     <Col lg="6" xl="6">
                       <FormGroup>
-                        <Label for="service">Serviço</Label>
+                        <Label for="service">Secretaria</Label>
                         <Input
                           id="service"
                           placeholder="Serviço"
@@ -230,7 +230,6 @@ const SolicitationIntern = (props) => {
                           type="select"
                           value={status}
                           disabled={read && status === 'Finalizada'}
-                          onChange={(e) => handleSubmit(e, e.target.value)}
                         >
                           {statusOptions.map((element, idx) => {
                             return (
@@ -338,6 +337,21 @@ const SolicitationIntern = (props) => {
                         </Media>
                       </FormGroup>
                     </Col>
+                  </Row>
+                  <Row style={{justifyContent: 'flex-end'}} >
+                   <FormGroup>
+                      <Button className="my-4" color="success" type="button" onClick={(e) => props.history.push('/admin/solicitations')}>
+                        Voltar
+                      </Button>
+
+                      <Button
+                        className="my-4"
+                        color="primary"
+                        onChange={(e) => handleSubmit(e, status)}
+                      >
+                        Salvar
+                      </Button>
+                    </FormGroup>
                   </Row>
                 </Form>
               </CardFooter>

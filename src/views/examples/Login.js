@@ -54,7 +54,7 @@ const Login = ({ history }) => {
           })
           .catch((err) => {
             toast.error(
-              'Houve um problema com o login, verifique as suas credenciais!'
+              'Login ou senha inválido(s), verifique as suas credenciais!'
             )
           })
       } catch (_err) {

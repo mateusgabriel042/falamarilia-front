@@ -149,7 +149,32 @@ const UsersIntern = (props, { history }) => {
             toast.success('Usuário alterado com sucesso!')
           })
           .catch((err) => {
-            toast.error('Houve um problema ao alterar o usuário!')
+            const response = err.response
+              let error = 'Houve um problema ao alterar o usuário!'
+
+              if (response && response.status == 500 && response.data) {
+                const data = response.data
+                if (
+                  data.message.includes('Duplicate entry') &&
+                  data.message.includes('for key') &&
+                  data.message.includes('profiles_cpf_unique')
+                ) {
+                  error =
+                    'O CPF digitado já existe no sistema cadastrado em outro usuário.'
+                }
+
+                if (
+                  data.message.includes('Duplicate entry') &&
+                  data.message.includes('for key') &&
+                  data.message.includes('users_email_unique')
+                ) {
+                  error =
+                    'O e-mail digitado já existe no sistema como munícipe, gestor ou administrador'
+                }
+                
+              }
+
+              toast.error(error)
           })
       } catch (_err) {
         toast.error('Houve um problema ao alterar o usuário!')

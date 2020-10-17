@@ -156,8 +156,12 @@ const Solicitations = (props) => {
                             />
                           </Media>
                         </td> */}
-                        <td style={{ color: element.service_color }}>
+                        <td style={{ color: element.service_color, textAlign: 'center' }}>
                           {element.service_name}
+                          <br></br>
+                          <p style={{ color: '#697490', fontSize: '10px'}}>
+                            {element.category_name}
+                          </p>
                         </td>
                         <td>
                           <Badge color="" className="badge-dot mr-4">

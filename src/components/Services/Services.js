@@ -57,6 +57,7 @@ const Services = (props, { history }) => {
   const [userData, setUserData] = useState('')
   const [modal, setModal] = useState(false)
   const [active, setActive] = useState(1)
+  const [activeNew, setActiveNew] = useState(1)
   const [icon, setIcon] = useState('home')
   const [color, setColor] = useState('#000000')
   const [name, setName] = useState('')
@@ -129,7 +130,7 @@ const Services = (props, { history }) => {
               name: name,
               color: color,
               icon: icon,
-              active: active,
+              active: activeNew,
             },
             {
               headers: {
@@ -140,6 +141,8 @@ const Services = (props, { history }) => {
           .then((res) => {
             try {
               toast.success('Secretaria cadastrada com sucesso!')
+
+              res.data.active = activeNew
               services.push(res.data)
               toggleModal()
             } catch (err) {
@@ -302,8 +305,8 @@ const Services = (props, { history }) => {
                   id="active"
                   placeholder="Ativo"
                   type="select"
-                  value={active}
-                  onChange={(e) => setActive(e.target.value)}
+                  value={activeNew}
+                  onChange={(e) => setActiveNew(e.target.value)}
                 >
                   <option value={1} selected>
                     Sim

@@ -91,7 +91,7 @@ const NoticeIntern = (props, { history }) => {
               title: title,
               description: description,
               type: 'Notícia',
-              expired_at: Moment(expired).format('YYYY-MM-DD 00:mm:ss'),
+              expired_at: Moment(expired).format('YYYY-MM-DD 23:59:59'),
             },
             { headers: headers }
           )
@@ -104,6 +104,10 @@ const NoticeIntern = (props, { history }) => {
       } catch (_err) {
         toast.error('Houve um problema ao alterar o comunicado!')
       }
+
+      setTimeout(() => {
+        props.history.push('/admin/comunicates')
+      }, 3000);
     }
   }
 
@@ -172,6 +176,15 @@ const NoticeIntern = (props, { history }) => {
                       style={{ display: 'flex', justifyContent: 'flex-end' }}
                     >
                       <FormGroup>
+                      <Button
+                          className="my-4"
+                          color="success"
+                          type="button"
+                          onClick={(e) => props.history.push('/admin/comunicates')}
+                        >
+                          Voltar
+                        </Button>
+
                         <Button
                           className="my-4"
                           color="primary"
