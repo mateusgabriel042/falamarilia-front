@@ -65,6 +65,34 @@ const Login = ({ history }) => {
     }
   }
 
+  const handlePasswordReset = async (e, userEmail) => {
+    e.preventDefault()
+    
+    if(!userEmail) {
+      toast.info('Digite o E-mail para a recuperação de senha.')
+      return
+    }
+    try {
+      await api
+        .post(
+          '/password/send',
+          {
+            email: email,
+          },
+        )
+        .then(async (res) => {
+          try {
+            toast.success('Senha resetada e enviada por e-mail com sucesso.')
+          } catch (err) {
+            toast.error('Houve um problema ao resetar a senha.')
+          }
+        })
+        .catch((err) => {
+          toast.error('Houve um problema ao resetar a senha.')
+        })
+    } catch (_err) {}
+  }
+
   return (
     <>
       <Col lg="5" md="7">
@@ -128,8 +156,8 @@ const Login = ({ history }) => {
           <Col xs="6">
             <a
               className="text-light"
-              href="#pablo"
-              onClick={(e) => e.preventDefault()}
+              href="#reset"
+              onClick={(e) => handlePasswordReset(e, email)}
             >
               <small>Esqueceu sua senha?</small>
             </a>

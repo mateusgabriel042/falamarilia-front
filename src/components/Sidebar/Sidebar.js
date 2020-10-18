@@ -54,7 +54,8 @@ const Sidebar = (props) => {
           !(
             prop.path.includes('comunicates') ||
             prop.path.includes('users') ||
-            prop.path.includes('services')
+            prop.path.includes('services') ||
+            prop.path.includes('citizens')
           )) ||
         userData.service === -1
       ) {
