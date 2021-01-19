@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 // import { Link } from 'react-router-dom'
 import {
   Card,
@@ -13,124 +13,123 @@ import {
   Container,
   Row,
   Col,
-} from 'reactstrap'
-import Header from '../Headers/Header.js'
-import { toast } from 'react-toastify'
-import Moment from 'moment'
-import 'moment/locale/pt-br'
+} from "reactstrap";
+import Header from "../Headers/Header.js";
+import { toast } from "react-toastify";
+import Moment from "moment";
+import "moment/locale/pt-br";
 
-import api from '../../services/api'
+import api from "../../services/api";
 
-const SolicitationIntern = (props) => {
+const SolicitationIntern = (props, { history }) => {
   const statusOptions = [
-    'Finalizada',
-    'Aguardando Resposta',
-    'Respondida',
-    'Em Andamento',
-  ]
+    "Finalizada",
+    "Aguardando Resposta",
+    "Respondida",
+    "Em Andamento",
+  ];
 
-  const [userData, setUserData] = useState('')
-  const [services, setServices] = useState([])
-  const [responsible, setResponsible] = useState(-1)
-  const [status, setStatus] = useState('')
-  const [serviceName, setServiceName] = useState('')
-  const [serviceId, setServiceId] = useState('')
-  const [categoryName, setCategoryName] = useState('')
-  const [userName, setUserName] = useState('')
-  const [description, setDescription] = useState('')
-  const [comment, setComment] = useState('')
-  const [photo, setPhoto] = useState('')
-  const [geolocation, setGeolocation] = useState('')
-  const [geoloc, setGeoloc] = useState('')
-  const [date, setDate] = useState('')
-  const [read, setRead] = useState(false)
-  const [protocol, setProtocol] = useState('')
+  const [userData, setUserData] = useState("");
+  const [services, setServices] = useState([]);
+  const [responsible, setResponsible] = useState(-1);
+  const [status, setStatus] = useState("");
+  const [serviceName, setServiceName] = useState("");
+  const [serviceId, setServiceId] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [description, setDescription] = useState("");
+  const [comment, setComment] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [geolocation, setGeolocation] = useState("");
+  const [geoloc, setGeoloc] = useState("");
+  const [date, setDate] = useState("");
+  const [read, setRead] = useState(false);
+  const [protocol, setProtocol] = useState("");
 
-  Moment.locale('pt-br')
+  Moment.locale("pt-br");
 
   useEffect(() => {
     const loadToken = () => {
-      setUserData(localStorage.getItem('@user_data'))
-    }
-    loadToken()
+      setUserData(localStorage.getItem("@user_data"));
+    };
+    loadToken();
 
     const loadSolicitations = async () => {
       try {
-        const userToken = JSON.parse(userData)
-        setRead(userToken.service !== -1 ? true : false)
+        const userToken = JSON.parse(userData);
+        setRead(userToken.service !== -1 ? true : false);
         await api
           .get(`/solicitation/admin/${props.match.params.id}`, {
             headers: {
-              Authorization: 'Bearer ' + userToken.token,
+              Authorization: "Bearer " + userToken.token,
             },
           })
           .then((res) => {
             try {
               if (res.data) {
-                setServiceName(res.data[0].service_name)
-                setServiceId(res.data[0].service_id)
-                setCategoryName(res.data[0].category_name)
-                setUserName(res.data[0].user_name)
-                setDescription(res.data[0].description)
-                setComment(res.data[0].comment)
-                setStatus(res.data[0].status)
-                setPhoto(res.data[0].photo)
-                setGeolocation(res.data[0].geolocation)
-                setGeoloc(res.data[0].geoloc)
-                setResponsible(res.data[0].responsible)
-                setDate(res.data[0].created_at)
-                setProtocol(res.data[0].protocol)
+                setServiceName(res.data[0].service_name);
+                setServiceId(res.data[0].service_id);
+                setCategoryName(res.data[0].category_name);
+                setUserName(res.data[0].user_name);
+                setDescription(res.data[0].description);
+                setComment(res.data[0].comment);
+                setStatus(res.data[0].status);
+                setPhoto(res.data[0].photo);
+                setGeolocation(res.data[0].geolocation);
+                setGeoloc(res.data[0].geoloc);
+                setResponsible(res.data[0].responsible);
+                setDate(res.data[0].created_at);
+                setProtocol(res.data[0].protocol);
               }
             } catch (err) {
-              toast.error('Houve um problema ao carregar a solicitação.')
+              toast.error("Houve um problema ao carregar a solicitação.");
             }
           })
           .catch((err) => {
-            toast.error('Houve um problema ao carregar a solicitação.')
-          })
+            toast.error("Houve um problema ao carregar a solicitação.");
+          });
       } catch (_err) {}
-    }
+    };
 
     const loadServices = async () => {
       try {
-        const userToken = JSON.parse(userData)
+        const userToken = JSON.parse(userData);
         await api
           .get(`/service`, {
             headers: {
-              Authorization: 'Bearer ' + userToken.token,
+              Authorization: "Bearer " + userToken.token,
             },
           })
           .then((res) => {
             try {
               if (res.data) {
-                setServices(res.data)
+                setServices(res.data);
               }
             } catch (err) {
-              toast.error('Houve um problema ao carregar a solicitação.')
+              toast.error("Houve um problema ao carregar a solicitação.");
             }
           })
           .catch((err) => {
-            toast.error('Houve um problema ao carregar a solicitação.')
-          })
+            toast.error("Houve um problema ao carregar a solicitação.");
+          });
       } catch (_err) {}
-    }
+    };
 
-    loadSolicitations()
-    loadServices()
-  }, [props.match.params.id, userData])
+    loadSolicitations();
+    loadServices();
+  }, [props.match.params.id, userData]);
 
   const handleSubmit = async (e, status) => {
-    e.preventDefault()
-
-    setStatus(status)
+    e.preventDefault();
+    console.log(status);
     if (status.length === 0) {
-      toast.error('Preencha o status para continuar!')
+      toast.error("Preencha o status para continuar!");
     } else {
       try {
-        const userToken = JSON.parse(userData)
+        const userToken = JSON.parse(userData);
         const headers = {
-          Authorization: 'Bearer ' + userToken.token,
-        }
+          Authorization: "Bearer " + userToken.token,
+        };
         await api
           .put(
             `/solicitation/${props.match.params.id}`,
@@ -143,16 +142,20 @@ const SolicitationIntern = (props) => {
             { headers: headers }
           )
           .then(async (res) => {
-            toast.success('Status alterado com sucesso!')
+            toast.success("Status alterado com sucesso!");
           })
           .catch((err) => {
-            toast.error('Houve um problema ao alterar o status da solicitação!')
-          })
+            toast.error(
+              "Houve um problema ao alterar o status da solicitação!"
+            );
+          });
       } catch (_err) {
-        toast.error('Houve um problema ao alterar o status da solicitação!')
+        toast.error("Houve um problema ao alterar o status da solicitação!");
       }
+
+      props.history.push("/admin/solicitations");
     }
-  }
+  };
 
   return (
     <>
@@ -165,7 +168,7 @@ const SolicitationIntern = (props) => {
             <Card className="shadow">
               <CardHeader className="border-0">
                 <h3 id="title" className="mb-0">
-                  {'Solicitação - ' + protocol}
+                  {"Solicitação - " + protocol}
                 </h3>
               </CardHeader>
               <CardFooter>
@@ -217,7 +220,7 @@ const SolicitationIntern = (props) => {
                           placeholder="Data de abertura"
                           type="text"
                           readOnly={true}
-                          value={Moment(date).format('DD/MM/YYYY - HH:mm')}
+                          value={Moment(date).format("DD/MM/YYYY - HH:mm")}
                         />
                       </FormGroup>
                     </Col>
@@ -229,14 +232,15 @@ const SolicitationIntern = (props) => {
                           placeholder="Status"
                           type="select"
                           value={status}
-                          disabled={read && status === 'Finalizada'}
+                          onChange={(e) => setStatus(e.target.value)}
+                          disabled={read && status === "Finalizada"}
                         >
                           {statusOptions.map((element, idx) => {
                             return (
                               <option key={idx} value={element}>
                                 {element}
                               </option>
-                            )
+                            );
                           })}
                         </Input>
                       </FormGroup>
@@ -254,7 +258,7 @@ const SolicitationIntern = (props) => {
                           value={
                             geolocation
                               ? geolocation
-                              : 'Usuário não inseriu endereço.'
+                              : "Usuário não inseriu endereço."
                           }
                         />
                       </FormGroup>
@@ -270,7 +274,7 @@ const SolicitationIntern = (props) => {
                           disabled={read}
                           onChange={(e) => setResponsible(e.target.value)}
                         >
-                          <option key={-1} value={''} selected>
+                          <option key={-1} value={""} selected>
                             Não Atribuida
                           </option>
                           {services.map((element, idx) => {
@@ -278,7 +282,7 @@ const SolicitationIntern = (props) => {
                               <option key={idx} value={element.id}>
                                 {element.name}
                               </option>
-                            )
+                            );
                           })}
                         </Input>
                       </FormGroup>
@@ -296,7 +300,7 @@ const SolicitationIntern = (props) => {
                           type="textarea"
                           rows={6}
                           readOnly={true}
-                          value={description}
+                          value={description ?? ""}
                         />
                       </FormGroup>
                     </Col>
@@ -313,8 +317,8 @@ const SolicitationIntern = (props) => {
                           type="textarea"
                           rows={6}
                           maxLength="2000"
-                          value={comment}
-                          disabled={read && status === 'Finalizada'}
+                          value={comment ?? ""}
+                          disabled={read && status === "Finalizada"}
                           onChange={(e) => setComment(e.target.value)}
                         />
                       </FormGroup>
@@ -327,27 +331,34 @@ const SolicitationIntern = (props) => {
                         <Media>
                           <img
                             src={
-                              photo !== 'noImage'
-                                ? 'http://177.85.33.222:8081/' + photo
-                                : require('assets/img/theme/noImage.jpg')
+                              photo !== "noImage"
+                                ? "http://177.85.33.222:8081/" + photo
+                                : require("assets/img/theme/noImage.jpg")
                             }
                             alt=""
-                            style={{ width: '300px', height: '300px' }}
+                            style={{ width: "300px", height: "300px" }}
                           />
                         </Media>
                       </FormGroup>
                     </Col>
                   </Row>
-                  <Row style={{justifyContent: 'flex-end'}} >
-                   <FormGroup>
-                      <Button className="my-4" color="success" type="button" onClick={(e) => props.history.push('/admin/solicitations')}>
+                  <Row style={{ justifyContent: "flex-end" }}>
+                    <FormGroup>
+                      <Button
+                        className="my-4"
+                        color="success"
+                        type="button"
+                        onClick={(e) =>
+                          props.history.push("/admin/solicitations")
+                        }
+                      >
                         Voltar
                       </Button>
 
                       <Button
                         className="my-4"
                         color="primary"
-                        onChange={(e) => handleSubmit(e, status)}
+                        onClick={(e) => handleSubmit(e, status)}
                       >
                         Salvar
                       </Button>
@@ -360,7 +371,7 @@ const SolicitationIntern = (props) => {
         </Row>
       </Container>
     </>
-  )
-}
+  );
+};
 
-export default SolicitationIntern
+export default SolicitationIntern;

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import ServicesCategories from './ServicesCategories'
+import React, { useEffect, useState } from "react";
+import ServicesCategories from "./ServicesCategories";
 import {
   Card,
   CardHeader,
@@ -16,92 +16,92 @@ import {
   Container,
   Row,
   Col,
-} from 'reactstrap'
-import Header from '../Headers/Header.js'
-import { toast } from 'react-toastify'
-import Moment from 'moment'
-import 'moment/locale/pt-br'
+} from "reactstrap";
+import Header from "../Headers/Header.js";
+import { toast } from "react-toastify";
+import Moment from "moment";
+import "moment/locale/pt-br";
 
-import api from '../../services/api'
+import api from "../../services/api";
 
 const ServicesIntern = (props, { history }) => {
   const activeOptions = [
-    { value: 0, label: 'Não' },
-    { value: 1, label: 'Sim' },
-  ]
+    { value: 0, label: "Não" },
+    { value: 1, label: "Sim" },
+  ];
   const icons = [
-    'home',
-    'flower',
-    'bus',
-    'account-hard-hat',
-    'delete',
-    'nature-people',
-    'nature',
-    'message-processing',
-    'home-remove',
-    'bank-remove',
-    'cancel',
-    'traffic-light',
-  ]
+    "home",
+    "flower",
+    "bus",
+    "account-hard-hat",
+    "delete",
+    "nature-people",
+    "nature",
+    "message-processing",
+    "home-remove",
+    "bank-remove",
+    "cancel",
+    "traffic-light",
+  ];
 
-  const [userData, setUserData] = useState('')
-  const [active, setActive] = useState('')
-  const [activeCategory, setActiveCategory] = useState(1)
-  const [categories, setCategories] = useState([])
-  const [icon, setIcon] = useState('home')
-  const [iconCategory, setIconCategory] = useState('home')
-  const [name, setName] = useState('')
-  const [nameCategory, setNameCategory] = useState('')
-  const [title, setTitle] = useState('')
-  const [color, setColor] = useState('')
+  const [userData, setUserData] = useState("");
+  const [active, setActive] = useState("");
+  const [activeCategory, setActiveCategory] = useState(1);
+  const [categories, setCategories] = useState([]);
+  const [icon, setIcon] = useState("home");
+  const [iconCategory, setIconCategory] = useState("home");
+  const [name, setName] = useState("");
+  const [nameCategory, setNameCategory] = useState("");
+  const [title, setTitle] = useState("");
+  const [color, setColor] = useState("");
 
-  Moment.locale('pt-br')
+  Moment.locale("pt-br");
 
   useEffect(() => {
     const loadToken = () => {
-      setUserData(localStorage.getItem('@user_data'))
-    }
-    loadToken()
+      setUserData(localStorage.getItem("@user_data"));
+    };
+    loadToken();
 
     const loadServices = async () => {
       try {
-        const userToken = JSON.parse(userData)
+        const userToken = JSON.parse(userData);
         await api
           .get(`/service/${props.match.params.id}`, {
             headers: {
-              Authorization: 'Bearer ' + userToken.token,
+              Authorization: "Bearer " + userToken.token,
             },
           })
           .then((res) => {
             try {
               if (res.data) {
-                setName(res.data[0].name)
-                setTitle(res.data[0].name)
-                setColor(res.data[0].color)
-                setActive(res.data[0].active)
-                setIcon(res.data[0].icon)
-                setCategories(res.data[0].category)
+                setName(res.data[0].name);
+                setTitle(res.data[0].name);
+                setColor(res.data[0].color);
+                setActive(res.data[0].active);
+                setIcon(res.data[0].icon);
+                setCategories(res.data[0].category);
               }
             } catch (err) {
-              toast.error('Houve um problema ao carregar a secretaria.')
+              toast.error("Houve um problema ao carregar a secretaria.");
             }
           })
           .catch((err) => {
-            toast.error('Houve um problema ao carregar a secretaria.')
-          })
+            toast.error("Houve um problema ao carregar a secretaria.");
+          });
       } catch (_err) {}
-    }
-    loadServices()
+    };
+    loadServices();
 
     const validate = () => {
-      const service = JSON.parse(userData)
+      const service = JSON.parse(userData);
 
-      return service.service !== -1 ? props.history.push('/admin') : ''
-    }
+      return service.service !== -1 ? props.history.push("/admin") : "";
+    };
 
     setTimeout(() => {
-      validate()
-    }, 1000)
+      validate();
+    }, 1000);
   }, [
     history,
     props.history,
@@ -109,26 +109,26 @@ const ServicesIntern = (props, { history }) => {
     props.location.state,
     props.match.params.id,
     userData,
-  ])
+  ]);
 
   const handleCreateCategory = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (
       nameCategory.length === 0 ||
       activeCategory.length === 0 ||
       iconCategory.length === 0
     ) {
-      toast.error('Preencha todos os campos de categoria para continuar!')
+      toast.error("Preencha todos os campos de categoria para continuar!");
     } else {
       try {
-        const userToken = JSON.parse(userData)
+        const userToken = JSON.parse(userData);
         const headers = {
-          Authorization: 'Bearer ' + userToken.token,
-        }
+          Authorization: "Bearer " + userToken.token,
+        };
         await api
           .post(
-            '/service/category',
+            "/service/category",
             {
               label: nameCategory,
               service_id: props.match.params.id,
@@ -138,24 +138,24 @@ const ServicesIntern = (props, { history }) => {
             { headers: headers }
           )
           .then(async (res) => {
-            categories.push(res.data)
-            toast.success('Categoria cadastrada com sucesso!')
+            categories.push(res.data);
+            toast.success("Categoria cadastrada com sucesso!");
 
             setTimeout(() => {
-              window.location.reload()
-            }, 1500)
+              window.location.reload();
+            }, 1500);
           })
           .catch((err) => {
-            toast.error('Houve um problema ao cadastrar a categoria!')
-          })
+            toast.error("Houve um problema ao cadastrar a categoria!");
+          });
       } catch (_err) {
-        toast.error('Houve um problema ao cadastrar a categoria!')
+        toast.error("Houve um problema ao cadastrar a categoria!");
       }
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (
       name.length === 0 ||
@@ -163,13 +163,13 @@ const ServicesIntern = (props, { history }) => {
       active.length === 0 ||
       icon.length === 0
     ) {
-      toast.error('Preencha todos os campos para continuar!')
+      toast.error("Preencha todos os campos para continuar!");
     } else {
       try {
-        const userToken = JSON.parse(userData)
+        const userToken = JSON.parse(userData);
         const headers = {
-          Authorization: 'Bearer ' + userToken.token,
-        }
+          Authorization: "Bearer " + userToken.token,
+        };
         await api
           .put(
             `/service/${props.match.params.id}`,
@@ -182,16 +182,18 @@ const ServicesIntern = (props, { history }) => {
             { headers: headers }
           )
           .then(async (res) => {
-            toast.success('Secretaria alterada com sucesso!')
+            toast.success("Secretaria alterada com sucesso!");
+
+            props.history.push("/admin/services");
           })
           .catch((err) => {
-            toast.error('Houve um problema ao alterar a Secretaria!')
-          })
+            toast.error("Houve um problema ao alterar a Secretaria!");
+          });
       } catch (_err) {
-        toast.error('Houve um problema ao alterar a Secretaria!')
+        toast.error("Houve um problema ao alterar a Secretaria!");
       }
     }
-  }
+  };
 
   return (
     <>
@@ -204,7 +206,7 @@ const ServicesIntern = (props, { history }) => {
             <Card className="shadow">
               <CardHeader className="border-0">
                 <h3 id="title" className="mb-0">
-                  {'Secretaria de ' + title}
+                  {"Secretaria de " + title}
                 </h3>
               </CardHeader>
               <CardFooter>
@@ -260,12 +262,12 @@ const ServicesIntern = (props, { history }) => {
                                 key={idx}
                                 value={element.value}
                                 {...(active === element.value
-                                  ? 'selected'
-                                  : '')}
+                                  ? "selected"
+                                  : "")}
                               >
                                 {element.label}
                               </option>
-                            )
+                            );
                           })}
                         </Input>
                       </FormGroup>
@@ -278,9 +280,9 @@ const ServicesIntern = (props, { history }) => {
                             <InputGroupText>
                               <i
                                 style={{
-                                  fontSize: '20px',
+                                  fontSize: "20px",
                                 }}
-                                class={'mdi mdi-' + icon}
+                                class={"mdi mdi-" + icon}
                               ></i>
                             </InputGroupText>
                           </InputGroupAddon>
@@ -295,11 +297,11 @@ const ServicesIntern = (props, { history }) => {
                                 <option
                                   key={idx}
                                   value={element}
-                                  {...(icon === element ? 'selected' : '')}
+                                  {...(icon === element ? "selected" : "")}
                                 >
                                   {element}
                                 </option>
-                              )
+                              );
                             })}
                           </Input>
                         </InputGroup>
@@ -310,10 +312,15 @@ const ServicesIntern = (props, { history }) => {
                     <Col
                       lg="12"
                       xl="12"
-                      style={{ display: 'flex', justifyContent: 'flex-end' }}
+                      style={{ display: "flex", justifyContent: "flex-end" }}
                     >
                       <FormGroup>
-                        <Button className="my-4" color="success" type="button" onClick={(e) => props.history.push('/admin/services')}>
+                        <Button
+                          className="my-4"
+                          color="success"
+                          type="button"
+                          onClick={(e) => props.history.push("/admin/services")}
+                        >
                           Voltar
                         </Button>
 
@@ -330,7 +337,7 @@ const ServicesIntern = (props, { history }) => {
                   <Card className="">
                     <CardHeader className="border-0">
                       <h3 id="title" className="mb-0">
-                        {'Cadastro de Categoria'}
+                        {"Cadastro de Categoria"}
                       </h3>
                     </CardHeader>
                   </Card>
@@ -377,9 +384,9 @@ const ServicesIntern = (props, { history }) => {
                               <InputGroupText>
                                 <i
                                   style={{
-                                    fontSize: '20px',
+                                    fontSize: "20px",
                                   }}
-                                  class={'mdi mdi-' + iconCategory}
+                                  class={"mdi mdi-" + iconCategory}
                                 ></i>
                               </InputGroupText>
                             </InputGroupAddon>
@@ -393,7 +400,7 @@ const ServicesIntern = (props, { history }) => {
                                   <option key={idx} value={element}>
                                     {element}
                                   </option>
-                                )
+                                );
                               })}
                             </Input>
                           </InputGroup>
@@ -404,10 +411,17 @@ const ServicesIntern = (props, { history }) => {
                       <Col
                         lg="12"
                         xl="12"
-                        style={{ display: 'flex', justifyContent: 'flex-end' }}
+                        style={{ display: "flex", justifyContent: "flex-end" }}
                       >
                         <FormGroup>
-                          <Button className="my-4" color="success" type="button" onClick={(e) => props.history.push('/admin/services')}>
+                          <Button
+                            className="my-4"
+                            color="success"
+                            type="button"
+                            onClick={(e) =>
+                              props.history.push("/admin/services")
+                            }
+                          >
                             Voltar
                           </Button>
 
@@ -432,7 +446,7 @@ const ServicesIntern = (props, { history }) => {
         </Row>
       </Container>
     </>
-  )
-}
+  );
+};
 
-export default ServicesIntern
+export default ServicesIntern;
